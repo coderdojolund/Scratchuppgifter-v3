@@ -1,0 +1,366 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head><body>
+<h1 id="flygande-valen-i-gamelab">Flygande valen i GameLab</h1>
+<p>På <a href="https://code.org" target="_blank">code.org:s hemsida</a> finns programmeringsmiljön GameLab som är blockprogrammering med programspråket
+JavaScript.</p>
+<p><a href="https://www.kodboken.se/start/skapa-spel/uppgifter-i-scratch/flygande-valen?chpt=1" target="_blank">Vi utgår från Flygande valen.</a>
+Gör det projektet först, <strong>i Scratch</strong>, så att du har det färskt i minne!</p>
+<p>Sen behöver du ordna ett konto på code.org så att du kan spara och dela ditt nya GameLab-projekt som vi ska göra nu.</p>
+<p>Här är min version av spelet som du kan testa: <a href="https://studio.code.org/projects/gamelab/8wmRVfcKHVP-5ObbY5NiPG3ISYZEYwuK_F-Xr0af0v4" target="_blank">https://studio.code.org/projects/gamelab/8wmRVfcKHVP-5ObbY5NiPG3ISYZEYwuK_F-Xr0af0v4</a></p>
+<p><img src="image13.png" width="400"></p>
+<h2 id="1-en-val-som-f-ljer-muspekaren">1: En val som följer muspekaren</h2>
+<ol>
+<li>Gå in på hemsidan code.org och välj “Game Lab” i Skapa-menyn. Du får ett tomt projekt.</li>
+<li>Gå till <em>Animations</em>-menyn. Rita en egen val eller leta upp en fri bild på t.ex. en narval. Pröva att Googla “narwhal cc0”. Spara bilden och ladda upp den till GameLab. Döp bilden till “narwhal” i rutan under.</li>
+</ol>
+<p><img src="image26.png" alt="Så här kan narvalen se ut"></p>
+<p>För att valen ska synas, behöver vi skriva några rader kod. Sprajten behöver skapas och sedan ritas i funktionen draw. Nästan alla program i GameLab kommer att börja så här:</p>
+<p><img src="image15.png" alt="Vår första kod"></p>
+<p>Starta koden med Kör-knappen.</p>
+<ol start="3">
+<li>Valen ska inte vara för stor. Se bilden överst i dokumentet. Sätt valens storlek med blocket <code>sprite.scale</code>. Dra in blocket och fyll i namn och storlek på sprajten. I mitt fall ser storleken 0.1 bra ut, vilket motsvarar längdskala 10%.</li>
+</ol>
+<p><img src="image3.png" alt="Sätt längdskalan"></p>
+<ol start="4">
+<li>Uppdatera koden så att valen pekar mot muspekaren eller där du trycker på pekskärmen. Det behövs en bakgrund också. Bakgrunden kan vara en bild men vi börjar med bara vit färg.</li>
+</ol>
+<p><img src="image18.png" alt="Valen pekar mot muspekaren"></p>
+<ol start="5">
+<li><p>--</p>
+</li>
+<li><p>Startpositionen har vi redan satt med när vi gör <code>createSprite</code>.</p>
+</li>
+<li><p>För att valen inte ska hoppa omkring gör vi en kontroll inne i funktionen <code>draw</code>.</p>
+</li>
+<li><p>GameLab har inget block för att räkna ut avstånd mellan två sprajtar. Vi gör ett eget funktionsblock som vi kallar <code>distance</code>. Vi använder <a href="https://nzmaths.co.nz/resource/gougu-rule-or-pythagoras-theorem" target="_blank">Pythagoras sats/Gougus regel</a> för att räkna ut avståndet mellan en sprajt och en punkt <em>(x, y)</em>. Om avståndet till muspekaren är 10 pixlar eller mindre sätter vi hastigheten till 0. Därför behöver vi flytta in <code>narwhal.setSpeedAndDirection</code> in i <code>draw</code>-funktionen.</p>
+</li>
+</ol>
+<p><img src="image9.png" alt="Stanna om muspekaren är för nära"></p>
+<p>Nu behöver vi bara funktionen för att räkna ut hypotenusan enligt figuren, alltså den streckade linjen:
+<img src="image6.png" alt="Avståndet mellan mittpunkten och (x, y)"></p>
+<p>Vi behöver ett sätt att räkna ut hypotenusan i triangeln. Du kan mata in koden så här i blocket return så kommer den sen att visas rätt när du trycker på Enter.
+<img src="image12.png" alt="Mata in så här"></p>
+<p>Så här ser det ut när du tryckt på Enter:
+<img src="image4.png" alt="funktionen distance"></p>
+<p>Visar du det som text ser det ut så här:</p>
+<pre><code class="lang-javascript">function hypot(x, y) {
+  return Math.pow(x * x + y * y, 0.5);
+}
+</code></pre>
+<p>En av styrkorna med GameLab är att man kan byta mellan block och textkod.
+Vissa saker kan vara lättare att mata in som textkod. 
+Du byter genom att klicka på knappen <em>Visa text</em> uppe till höger. Så här ser koden ut nu i textform.
+<img src="image10.png" alt="Visa text"></p>
+<pre><code class="lang-javascript">// Förbered
+var narwhal = createSprite(200, 200);
+narwhal.setAnimation(&quot;narwhal&quot;);
+narwhal.scale = 0.1;
+narwhal.rotateToDirection = true;
+// Rita
+function draw() {
+  background(&quot;white&quot;);
+  narwhal.pointTo(World.mouseX, World.mouseY);
+  if (distance(narwhal, World.mouseX, World.mouseY) &gt; 10) {
+    narwhal.setSpeedAndDirection(1, narwhal.getDirection());
+  } else {
+    narwhal.setSpeedAndDirection(0, narwhal.getDirection());
+  }
+  drawSprites();
+}
+// Hjälpfunktioner
+function distance(sprite, x, y) {
+  return hypot(x - sprite.x, y - sprite.y);
+}
+function hypot(x, y) {
+  return Math.pow(x * x + y * y, 0.5);
+}
+</code></pre>
+<p>Sen kan du byta tillbaks till block med knappen <em>Visa block</em>.
+<img src="image2.png" alt="Visa text"></p>
+<h2 id="2-en-himmel-som-bakgrund">2: En himmel som bakgrund</h2>
+<ol start="10">
+<li><p>Vi har redan lagt in en vit bakgrund. Du kan lägga in bakgrundssprajt genom att helt enkelt lägga till en sprajt först i din kod. Sprajtarna ritas i den ordning vi skapar dem med <code>createSprite</code>. Vi skapar bakgrunden först, före narvalen. Bilden <em>Pine trees</em> hittar du i AppLabs bibliotek med animeringar.
+<img src="image7.png" alt="Bakgrunden"></p>
+</li>
+<li><p>Detta gjorde vi i steg 9.</p>
+</li>
+<li><p>Du kan lägga till moln genom att söka på <em>Cloud</em> i animeringsbiblioteket.
+Så här kan spelet se ut nu, utan moln.
+<img src="image5.png" alt="Bakgrunden"></p>
+</li>
+</ol>
+<h2 id="3-munkar-att-ta">3: Munkar att äta</h2>
+<ol start="13">
+<li>Det finns ingen munk (donut) i animeringsbiblioteket men en cupcake är väl lika nyttig :) så vi lägger in den i <em>Animations</em> och kallar den <code>cupcake</code>. 
+<img src="image20.png" alt="Cupcake"></li>
+</ol>
+<p>Vi lägger också till <code>CreateSprite</code>, <code>setAnimation</code> och <code>scale</code> för att få rätt storlek. Vi använder <code>randomNumber</code> för att vår cupcake ska dyka upp på en slumpmässig <em>x</em>- och <em>y</em>-position när den skapas.
+<img src="image21.png" alt="Skapa sprajten för cupcake"></p>
+<ol start="14">
+<li><p>Detta gjorde vi i steg 12.</p>
+</li>
+<li><p>Vi sätter hastigheten på vår cupcake som innan med <code>setSpeedAndDirection</code>. Vi passar också på att sätta en slumpmässig riktning som den startar i.
+För att få vår cupcake att studsa vid kanten behöver vi använda <code>createEdgeSprites</code>. Kolla exemplen för det blocket i GameLab: LÄNK. Inne i draw ska vi också komma ihåg att studsa vid kanterna. Så här kan det se ut:
+<img src="image25.png" alt="Hastighet, riktning och createEdgeSprites"></p>
+</li>
+</ol>
+<p>Så här ser hela koden ut nu:</p>
+<pre><code class="lang-javascript">// Förbered
+var backgroundSprite = createSprite(200, 200);
+backgroundSprite.setAnimation(&quot;pine_trees&quot;);
+var narwhal = createSprite(200, 200);
+narwhal.setAnimation(&quot;narwhal&quot;);
+narwhal.scale = 0.1;
+narwhal.rotateToDirection = true;
+var cupcake = createSprite(randomNumber(0, 300), randomNumber(0, 300));
+cupcake.setAnimation(&quot;cupcake&quot;);
+cupcake.scale = 0.15;
+cupcake.setSpeedAndDirection(1, randomNumber(0, 360));
+createEdgeSprites(); // Skapar variabeln (sprajten) edges
+// Rita
+function draw() {
+  background(&quot;white&quot;);
+  cupcake.bounceOff(edges);
+  narwhal.pointTo(World.mouseX, World.mouseY);
+  if (distance(narwhal, World.mouseX, World.mouseY) &gt; 10) {
+    narwhal.setSpeedAndDirection(1, narwhal.getDirection());
+  } else {
+    narwhal.setSpeedAndDirection(0, narwhal.getDirection());
+  }
+  drawSprites();
+}
+// Hjälpfunktioner
+function distance(sprite, x, y) {
+  return hypot(x - sprite.x, y - sprite.y);
+}
+function hypot(x, y) {
+  return Math.pow(x * x + y * y, 0.5);
+}
+</code></pre>
+<h2 id="4-valen-ter-munkar">4: Valen äter munkar</h2>
+<h1 id="-ta-bort-sen-referensmaterial-fr-n-scratchuppgiften">...TA BORT SEN... Referensmaterial från Scratchuppgiften</h1>
+<h2 id="1-en-val-som-f-ljer-muspekaren">1: En val som följer muspekaren</h2>
+<p>När du startar ett nytt projekt visas en katt som enda sprajt på vit bakgrund. Ta bort katten och rita en egen sprajt som ska vara spelets huvudkaraktär, den flygande valen. Den ska kunna styras med hjälp av muspekaren.</p>
+<ol>
+<li><p>Tryck på <strong>lilla soptunnan</strong> på lilla kattfiguren nere till höger, så försvinner katt-sprajten ur ditt projekt.</p>
+<p><img src="image_1.png" alt="Ta bort sprajt genom att klicka på vita soptunnan på lilla sprajt-ikonen"></p>
+</li>
+<li><p>Håll muspekaren över <strong>&quot;Välj en sprajt”</strong> (katten med det vita plus-tecknet) nere i högra hörnet, så kommer en meny upp. Välj  <strong>Måla</strong> (penseln) i menyn - nu kan du rita en egen ny sprajt. Här får du själv prova dig fram och rita din egen val. Om du hellre vill använda en färdig sprajt ur Scratch sprajtbibliotek, så tryck bara på knappen <strong>”Välj en sprajt”</strong> (katten med det vita plus-tecknet).</p>
+<p><img src="image_2.png" alt="Rita nya sprajt genom att klicka på måla i menyn under den vita katten med ett plus"></p>
+</li>
+<li><p>För att spelet ska bli enklare att spela måste du nu minska storleken på valen. Ändra storleken genom att skriva in 50 i <strong>rutan för storlek</strong> (finns på höger sida). Välj en ännu mindre storlek om det behövs.</p>
+<p><img src="image_3.png" alt="Skriv i rutan för storlek"></p>
+</li>
+<li><p>Tryck nu på kod-fliken i översta högra hörnet, så stängs ritverktyget och du kan börja koda. Dra sen ut ett kod-block för <strong>HÄNDELSER</strong>: <strong>&quot;när START (flaggan) klickas på”</strong> och lägg ut på kodytan. Under detta block fäster du ett <strong>”för alltid”</strong> block som finns under orangea temat <strong>KONTROLL</strong>. Det här är en LOOP som gör att sprajten fortsätter röra sig hela tiden, om och om igen, så länge programmet är igång.</p>
+</li>
+<li><p>Inuti den orangea loopen lägger du ett block från <strong>RÖRELSE</strong> som säger <strong>&quot;peka mot muspekare”</strong> och under den lägger du i blocket  <strong>”gå 10 steg”</strong>. Ändra värdet 10 i blocket mot ett värde som du tycker ger lagom hastighet! (Ju högre tal, desto snabbare rör sig sprajten i spelet.)</p>
+</li>
+<li><p>För att valen alltid ska starta från samma ställe på scenen varje gång spelet går igång, behöver du sätta en startposition. Gör såhär: Dra valen dit du vill ha den på scenen när ditt spel ska starta. Välj från <strong>RÖRELSE</strong> och dra ut <strong>&quot;gå till x: y:”</strong> och koppla fast direkt under blocket <strong>&quot;när START (flaggan) klickas på&quot;</strong>, alltså ovanför loopen <strong>&quot;för alltd&quot;</strong>. De värden som står automatiskt efter X och Y är KOORDINATER för den plats där du placerat valen. Du kan alltid ändra om dem om du inte är nöjd.</p>
+<p><img src="image_4.png" alt="Kod för när flaggan klickas på gå till x och y för alltid peka mot muspekare gå 3 steg"></p>
+</li>
+</ol>
+<p><strong>Tips:</strong> För att valen inte ska vända sig upp och ned i spelet, klicka på sprajtens riktning och klicka sen på valet <strong>vänster/höger</strong> (de två små pilarna i nedre mitten som pekar mot varandra).</p>
+<p>  <img src="image_15.png" alt="klicka på sprajtens riktning"></p>
+<blockquote>
+<p>Testa ditt projekt! Klicka på START-flaggan. Kan du styra valen med muspekaren? Går den lagom snabbt?
+Vad händer om du inte rör muspekaren och valen hinner ikapp den? Hur ser det ut? Varför händer det, tror du?</p>
+</blockquote>
+<ol start="7">
+<li><p>Studsar din val omkring helt tokigt när den kommer nära muspekaren? Du kan förhindra det genom att lägga till blocket <strong>&quot;om &lt;&gt; då”</strong> som finns under <strong>KONTROLL</strong>. Blocket för <strong>&quot;om &lt;&gt; då”</strong> ska då läggas inuti loopen men utanför din kod för rörelsen.</p>
+</li>
+<li><p>Välj sen två olika block att lägga in från <strong>OPERATORER</strong> och <strong>KÄNNA AV</strong>. (Se bilden nedan för hur de ska läggas in i skriptet.) När du är klar ska val-sprajten göra detta:</p>
+<ul>
+<li><p>Om <strong>avståndet till muspekare är större än 10</strong> då <strong>Peka mot muspekaren</strong> och <strong>gå</strong> </p>
+</li>
+<li><p>Stå stilla om avståndet är mindre än eller lika med 10.</p>
+</li>
+</ul>
+<p><img src="image_5.png" alt="Tidigare koden med om avståndet till musen är större än 10"></p>
+</li>
+</ol>
+<blockquote>
+<p>Testa ditt projekt! Klicka på START. Fungerar det bättre att styra valen nu? </p>
+</blockquote>
+<h2 id="2-en-himmel-som-bakgrund">2: En himmel som bakgrund</h2>
+<p>Du ska nu få rita en bakgrund till spelet. Här i exemplet är det en blå himmel, men du får hitta på som du vill. Du behöver inte rita moln på himlen, för det lägger du till som sprajtar. Då kan du välja att programmera dem senare i en av våra utmaningar!</p>
+<ol start="9">
+<li><p>För att ändra bakgrunden trycker du först på SCEN längst till höger och sedan på fliken BAKGRUNDER högst upp i mitten.</p>
+<p><img src="image_6.png" alt="En vit bakgrund till höger som säger bakgrund">
+<img src="image_7.png" alt="En tabb i övre menyn som säger bakgrund"></p>
+</li>
+<li><p>Tryck på <strong>&quot;Gör till bitmapp&quot;</strong>. Välj en färg under <strong>&quot;Fyll&quot;</strong>. Tryck på målarburken sedan på bakgrunden för att måla hela bakgrunden med den valda färgen.</p>
+</li>
+<li><p>Moln gör du som sprajtar. Rita egna med <strong>&quot;Måla”</strong> eller välj en som redan finns. Sök efter <strong>”Cloud”</strong> för att hitta moln. Gör sprajten lagom stor och placera på scenen. Kopiera för flera moln, eller välj två olika moln om du vill!</p>
+<p><img src="image_8.png" alt="Två sprajtar som visar clouds efter man har sökt efter dem"></p>
+</li>
+</ol>
+<h2 id="3-munkar-att-ta">3: Munkar att äta</h2>
+<p>I spelet ska valen äta munkar som rör sig över himlen. Du ska nu få skapa dessa sprajtar och få dem att röra sig slumpmässigt. Om du inte vill rita egna munkar själv finns det färdiga i Scratch. Du gör en munk-sprajt som du kodar, sen kopierar du den till fler munkar  efter att skriptet med dess kod är klart. På så vis slipper du koda om samma sak för vardera munk, det blir enklare. Nu börjar vi:</p>
+<ol start="12">
+<li><p>Rita en egen munk med <strong>&quot;Måla”</strong> eller välj en färdig som redan finns i Scratch sprajt-bibliotek. Under kategorin <strong>&quot;Mat&quot;</strong> hittar du en munk, <strong>”Donut”</strong>. Ändra sprajtens storlek så den blir lagom stor och placera på en startposition på scenen med valen. Vänta med att kopiera sprajten till efter att du har programmerat den! Du behöver bara en sprajt för alla dina munkar - de blir kopior av varandra.</p>
+<p><img src="image_9.png" alt="En bild av en donut"></p>
+</li>
+<li><p>Då börjar vi koda vår munk. Se till att munk-sprajten är vald, så att du kodar munken och inte valen. Dra sen ut blocket för <strong>HÄNDELSER</strong>: <strong>&quot;när START (flaggan) klickas på”</strong> till skriptytan för munk-sprajten. Under start-blocket fäster du sen blocket <strong>”för alltid”</strong> från <strong>KONTROLL</strong> - alltså en loop.</p>
+</li>
+<li><p>Inuti loopen fäster du nu olika block från <strong>RÖRELSE</strong>, <strong>KONTROLL</strong>, <strong>KÄNNA AV</strong> och även <strong>&quot;Operatorer&quot;</strong> som säger att sprajten ska:</p>
+<p><strong>För alltid</strong></p>
+<ul>
+<li><p>Gå 2 steg</p>
+</li>
+<li><p>Om den känner av kanten, då ska den...</p>
+</li>
+<li><p>...slumpmässigt rotera sig mellan -20 till 20 grader</p>
+</li>
+<li><p>Studsa vid kanten</p>
+</li>
+</ul>
+</li>
+</ol>
+<p>  <img src="Munk_skript_slump_grader.png" alt="Donuts kod"></p>
+<p><strong>Tips:</strong> Blocket för <strong>&quot;slumptal”</strong> hittar du under <strong>OPERATORER</strong>. Du lägger in blocket inuti vita rutan för värdet på <strong>”rotera”</strong>-blocket. Skriv in de värden som du vill att skriptet ska slumpa mellan. Prova dig fram vilka värden som blir bra, minusvärde ger vänster och plusvärde är höger!</p>
+<blockquote>
+<p>Testa ditt projekt! Klicka på START. Flyger munken runt på himlen?</p>
+</blockquote>
+<blockquote>
+<p>Pröva att byta ut värdena för &quot;slumptal” och ”gå”-blocken. Rör sig munken annorlunda? Vad gör &quot;studsa om vid kanten”-blocket? Pröva att ta bort det blocket och se vad som händer!</p>
+</blockquote>
+<h2 id="4-valen-ter-munkar">4: Valen äter munkar</h2>
+<p>Nu ska du få valen att äta munken. När valen når fram till en munk och rör den med sin mun så ska munken bli osynlig för att sedan visa sig igen en stund senare igen, så att munkarna aldrig tar slut! Gör såhär:</p>
+<ol start="15">
+<li><p>Se till att din munk-sprajt är vald för att kunna kodas. Dra ut blocket <strong>&quot;om &lt;&gt; då&quot;</strong> som finns under <strong>KONTROLL</strong> och lägg det inuti munkens <strong>”för alltid”</strong>-loop, direkt inunder det första <strong>&quot;om &lt;&gt; då&quot;</strong>-blocket. Nu ska du lägga till block så att munken kan <strong>KÄNNA AV</strong> om den <strong>”rör vid färgen __”</strong> som alltså ska vara munnens färg på valen - och rör munken vid munnens färg så ska den bli osynlig under tre sekunder. Skriptet ska då innehålla instruktioner som säger att:</p>
+<p><strong>Om</strong> rör valen, <strong>då</strong> ska munk-sprajten:</p>
+<ul>
+<li><p>Gömma sig</p>
+</li>
+<li><p>Vänta 3 sekunder</p>
+</li>
+<li><p>Visa sig igen</p>
+</li>
+</ul>
+</li>
+</ol>
+<ol start="16">
+<li><p>Se till att färgen i kodblocket <strong>&quot;rör vid färgen&quot;</strong> är den rätta munfärgen på din val. Det gör du genom att klicka på den runda färgcirkeln i blocket <strong>&quot;rör vid färgen&quot;</strong> och sen klicka på den lilla pimpetten som kommer fram längst ned i färgväljarmenyn. Klicka sedan på munnen på valen, så ändras färgen i blocket till den rätta. </p>
+<p><img src="image_11b.png" alt="Färgväljaren längst ner i menyn, en bild av en pipett och ett fotografi"></p>
+</li>
+</ol>
+<ol start="16">
+<li><p>Lägg till ett block för <strong>&quot;visa”</strong> även direkt under <strong>”när START klickas på”</strong>. Annars kan det bli fel när du startar spelet! När tror du att det kan hända?</p>
+<p><img src="Munk_om_rör_munfärgen_skript.png" alt="Kod för donuts gömmer nu donuts om den rör vid valen"></p>
+</li>
+</ol>
+<blockquote>
+<p>Testa ditt projekt! Klicka på START. Försvinner munken när den nuddar vid valen? Spelar det någon roll vilken del av valen som rör vid munken?</p>
+</blockquote>
+<ol start="18">
+<li><p>Efter att den uppätna munken gömst sig kan du få den att flytta sig till en slumpvis plats på scenen innan den visar sig igen. För det behöver du lägga till ett block för <strong>&quot;gå till x: y:”</strong> från <strong>RÖRELSE</strong> och två stycken block <strong>”slumptal 1 till 10”</strong> från <strong>OPERATORER</strong>. Lägg in slump-blocken i de två variabelcirklarna med siffror i det blå blocket, efter x och y. Skriv in munkens nya koordinater: -240 till 240 i den första och -180 till 180 i den andra. Då täcker du hela scenens koordinatsystem.</p>
+<p><img src="image_12.png" alt="Kod för donut som nu går slumpmässigt mellan x -240 och 240 och slumpmässigt mellan y -180 och 180"></p>
+</li>
+</ol>
+<blockquote>
+<p>Testa ditt projekt! Klicka på START. Försvinner munken endast om den nuddar valens mun? Dyker den upp igen på en ny slumpvis vald plats på scenen istället för där den blev uppäten?</p>
+</blockquote>
+<h2 id="5-po-ng-f-r-att-ta-munkar-">5: Poäng för att äta munkar!</h2>
+<p>Det räcker inte med att bara äta munkar. Du ska kunna samla poäng också! För varje munk som valen äter ska spelet lägga till 1 poäng, och du vill kunna se hur många poäng du har fått.</p>
+<p>För att räkna poäng behöver du med kod skapa en VARIABEL. Det kan liknas vid en låda där du lägger i eller tar ur saker. I variabeln lägger du ett värde, t ex en siffra, som kan öka eller minska. Variablen håller reda på hur många saker som ligger i lådan, exempevis hur många poäng du har i ditt spel, en poängräknare. Låter det konstigt? Snart får du se hur det fungerar. Låt oss koda en poängräknare som håller koll på hur många munkar valen ätit upp - ett poäng för vardera munk.</p>
+<ol start="19">
+<li><p>Börja med att skapa ett skript som får munken att skicka ett <strong>meddelande</strong> när den blir uppäten. Lägg till blocket <strong>&quot;skicka meddelande1&quot;</strong> från <strong>HÄNDELSER</strong> och fäst det under det lila <strong>”göm”</strong>-blocket. Klicka på texten <strong>&quot;meddelande1&quot;</strong> i blocket du just lade till och välj <strong>&quot;Nytt meddelande&quot;</strong>. Döp meddelandet till ”<em>jag är uppäten</em>” och tryck OK.</p>
+<p><img src="NyttMeddelande.png" alt="Skapa nytt meddelande att munken är uppäten"></p>
+<p><img src="image_13.png" alt="Koden skickar meddelande &quot;jag är uppäten&quot; när den rör vid valens mun"></p>
+</li>
+<li><p>Markera nu SCEN istället för sprajtarna, så du kan lägga kod på scenen istället. Klicka på den lilla bilden av din scens bakgrund nere till höger i Sratch, så väljs scenen. 
+Här gör du ett skript som tar emot meddelandet som den uppätna munken skickar ut. Du vill du tala om för scenen att den ska räkna poäng när munken blir uppäten. För det behöver klicka på <strong>skapa en variabel</strong> från temat <strong>VARIABLER</strong> som du döper till &quot;<em>poäng</em>”. </p>
+<p><img src="skapaEnVariabel.png" alt="Skapa en variabel som ska räkna poäng"></p>
+</li>
+<li><p>Från <strong>&quot;HÄNDELSER</strong> tar du ut blocket <strong>när jag tar emot meddelande1</strong>. Klicka på lilla pilen bredvid &quot;<em>meddelande1&quot;</em> och välj meddelandet med namnet <em>&quot;jag är uppäten&quot;</em>, så den tar emot meddelandet från munken. </p>
+</li>
+<li><p>Från <strong>&quot;VARIABLER&quot;</strong> drar du ut blocket <strong>”ändra <em>min variabel</em> med 1”</strong> och fäst det under <strong>”när jag tar emot &quot;<em>jag är uppäten</em>&quot;”</strong>. Klicka på lilla pilen i blocket och ändra till vår skapade variabel som heter <strong>poäng</strong>, så det blir rätt.</p>
+</li>
+<li><p>För att nollställa spelets poängräknare vid start gör du ett till skript som säger att <strong>&quot;när START (flaggan) klickas på”</strong> så <strong>”sätt poäng till 0”</strong>.</p>
+<p><img src="image_14.png" alt="Bakgrundens kodyta har kod för att nollställa vid start av programmet och kod för att om den tar emot meddelandet jag är uppäten att ändra poäng med 1"></p>
+</li>
+<li><p>Nu kan du kopiera munk-sprajten så att du får så många munkar som du vill ha på himlen! Kopiera genom att högerklicka på den lilla bilden av din munk-sprajt under scenen och välj kopiera. Då får du en till likadan munk, med dess kod-skript och allt. Kopiera fram flera munkar tills du är nöjd. </p>
+</li>
+</ol>
+<blockquote>
+<p><strong>Glöm inte!</strong> Du behöver ändra i vardera munk-sprajts <strong>startposition</strong> för var de ska vara när spelet börjar. Annars börjar alla munkar på exakt samma ställe när spelet börjar.</p>
+</blockquote>
+<p>Om du vill att munkarna ska bli unika och därmed lite olika varandra kan du till exempel:</p>
+<ul>
+<li><p>Ändra munkarnas färger med ritverktyget </p>
+</li>
+<li><p>Ändra munkarnas storlek, hastighet och riktning</p>
+</li>
+</ul>
+<p><strong>Tips:</strong> Om du vill kan du lägga till en ljudeffekt när valen äter upp munken! Från <strong>LJUD</strong> lägger du in ett block för <strong>&quot;starta ljud___&quot;</strong> i det skript du nyss gjort. Testa hur det låter. Vill du ändra till annant ljud kan du välja ett nytt i Scratch ljud-bibliotek. Det finner du genom att klicka på fliken som heter <strong>LJUD</strong> högt uppe till vänster i Scratch. Klicka sedan på den blå knappen <strong>Välj ljud</strong> i nedre vänstra hörnet. Välj ett ljud du gillar i biblioteket genom att klicka på det. Klicka slutligen på lilla pilen i ditt ljudblock i kodskriptet och välj det nya ljud du just lade till. Då spelas det istället. </p>
+<p>  <img src="Ljudflik.png" alt="Ljudfliken tar dig till ljudredigeraren"></p>
+<p>  <img src="Ljudknapp.png" alt="Klicka på knappen Välj ett ljud för att komma till ljudbiblioteket"></p>
+<p>För att komma tillbaka till skriptytan där du kan koda igen, så klickar du på fliken <strong>KOD</strong> i övre vänstra hörnet. 
+  <img src="Kodflik.png" alt="Kodfliken tar dig till skriptytan med kodblocken"></p>
+<blockquote>
+<p>Testa ditt projekt! Klicka på START. Står poängräknaren på 0 när du startar spelet? Ändras poängen när valen äter upp munkar?</p>
+</blockquote>
+<h2 id="nu-har-du-ett-f-rdigt-spel-">Nu har du ett färdigt spel!</h2>
+<p>Grattis, nu har du gjort färdigt uppgiften.</p>
+<ul>
+<li><p><strong>Döp ditt projekt</strong> i rutan högst upp till vänster.</p>
+</li>
+<li><p>Tryck på <strong>DELA</strong> i mitten högst upp för att andra ska kunna hitta projektet på Scratch.</p>
+</li>
+<li><p>Gå ut till projektsidan och låt någon annan <strong>testa ditt spel</strong>.</p>
+</li>
+</ul>
+<h2 id="utmaningar">Utmaningar</h2>
+<p>Nu är det fritt fram för dig att hitta på helt egna funktioner till ditt spel – eller fortsätta med någon av våra utmaningar:</p>
+<ul>
+<li><p>Tidsgräns för spelet med en tidräknare (VARIABLER)</p>
+</li>
+<li><p>Minuspoäng för moln</p>
+</li>
+<li><p>Flera banor - andra figurer än valen?</p>
+</li>
+<li><p>Munkar i olika hastighet och rörelsemönster</p>
+</li>
+<li><p>Super-munkar som ger mer än 1 poäng - eller motståndare som ger minuspoäng eller stjäl tid?</p>
+</li>
+<li><p>En motståndare som åker runt och äter upp munkarna eller som du måste undvika för att inte bli game over?</p>
+</li>
+<li><p>Vad mer kan du komma på att spelet kan innehålla?</p>
+</li>
+</ul>
+<h3 id="tidsgr-ns-f-r-spelet">Tidsgräns för spelet</h3>
+<p>Klicka på spelet nedan för ett testa av en påskinspirerat spel med en tidräknare. <a href="https://scratch.mit.edu/projects/383201383/" target="_blank">
+<img src="Flygande_påskharen_äter_ägg.png" alt="projektexempel Påskharen äter ägg"></a> </p>
+<p>Om du vill att spelet ska vara på tid kan du göra ett skript som avslutar spelet efter ett visst antal sekunder. Hur många munkar hinner valen äta på exempelvis 30 sekunder?</p>
+<p>För det behöver du först skapa en ny VARIABEL som du döper till <strong>&quot;tid”</strong> och som gäller för alla sprajtar. Sedan gör du ett skript för SCEN som talar om att:</p>
+<ul>
+<li><p>Starta när spelet startar</p>
+</li>
+<li><p>Sätt <strong>&quot;tid”</strong> till 30</p>
+</li>
+<li><p><strong>Repetera</strong> tills <strong>tid &lt; 0</strong></p>
+<ul>
+<li><p><strong>ändra tid med -1</strong></p>
+</li>
+<li><p><strong>vänta</strong> 1 sekund</p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>Om <strong>tid &lt; 0</strong>, då <strong>stoppa alla skript</strong> så att spelet avslutas</li>
+</ul>
+<h3 id="minuspo-ng-f-r-moln">Minuspoäng för moln</h3>
+<p>I spelet SkyWhale ska valen undvika vissa flygande objekt, som bläckfiskar och hårtorkar. Kan du skapa ett skript för att minska poäng, <strong>&quot;ändra poäng med -1”</strong>, om valen flyger på ett moln?</p>
+<h3 id="flera-banor">Flera banor</h3>
+<p>I spelet SkyWhale kan valen även flyga ut i rymden och ner till en undervattensvärld. Kan du göra ett skript som <strong>byter scenens bakgrund</strong> när spelaren når en viss poäng – så att ditt spel består av flera banor? Rita flera bakgrundsbilder eller välj ur biblioteket under fliken BAKGRUNDER.</p>
+<h2 id="fr-gest-llningar">Frågeställningar</h2>
+<ul>
+<li><p>Vad är slumptal och vad kan du använda dem till?</p>
+</li>
+<li><p>Vad är en variabel?</p>
+</li>
+<li><p>Vilka två sätt kan du använda för att köra kod när två sprajtar rör vid varandra?</p>
+</li>
+</ul>
+</body></html>
