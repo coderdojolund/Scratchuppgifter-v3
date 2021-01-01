@@ -155,17 +155,104 @@ function hypot(x, y) {
 
 ## 4: Valen äter munkar
 
+16. I GameLab finns det inget enkelt sätt att känna av om en sprajt rör vid en färg. Vi testar att känna av om vår cupcake rör narvalen som en första idé. Det får vi göra inne i `draw` som vanligt.
+Vi vill att `cupcake` ska gömma sig tre sekunder när narvalen rör den. Därför sätter vi räknaren `countdown` till 3 gånger vår framerate (FPS). Sen räknar vi ner den varje gång vi är i `draw`. När rätt antal frames (rutor) har gått, så skapar vi `cupcake` igen så att den syns.
+Att sätta `cupcake.visible = false` räcker inte eftersom vi fortfarande kan röra en osynlig sprajt. Därför förstör vi sprajten och skapar en ny.
+![Låt cupcake försvinna om den rör valen](image8.png)
+
+17. Se 15
+18. Se 15
+19. Se 15
+
+Här är hela koden som text:
+```javascript
+// Förbered
+var backgroundSprite = createSprite(200, 200);
+backgroundSprite.setAnimation("pine_trees");
+var narwhal = createSprite(200, 200);
+narwhal.setAnimation("narwhal");
+narwhal.scale = 0.1;
+narwhal.rotateToDirection = true;
+var cupcake = createSprite(randomNumber(0, 300), randomNumber(0, 300));
+cupcake.setAnimation("cupcake");
+cupcake.scale = 0.15;
+cupcake.setSpeedAndDirection(1, randomNumber(0, 360));
+createEdgeSprites(); // Skapar variabeln (sprajten) edges
+var countDown = 0;
+// Rita
+function draw() {
+  background("white");
+  cupcake.bounceOff(edges);
+  if (narwhal.isTouching(cupcake)) {
+     cupcake.destroy();
+     countDown = 3 * World.frameRate;
+  }
+  if (countDown > 0) { // Nedräkning pågår
+    countDown = countDown - 1;
+    if (countDown <= 0) { // Nedräkning klar
+      cupcake = createSprite(randomNumber(0, 300), randomNumber(0, 300));
+      cupcake.setAnimation("cupcake");
+      cupcake.scale = 0.15;
+      cupcake.setSpeedAndDirection(1, randomNumber(0, 360));
+    }
+  }
+  narwhal.pointTo(World.mouseX, World.mouseY);
+  if (distance(narwhal, World.mouseX, World.mouseY) > 10) {
+    narwhal.setSpeedAndDirection(1, narwhal.getDirection());
+  } else {
+    narwhal.setSpeedAndDirection(0, narwhal.getDirection());
+  }
+  drawSprites();
+}
+// Hjälpfunktioner
+function distance(sprite, x, y) {
+  return hypot(x - sprite.x, y - sprite.y);
+}
+function hypot(x, y) {
+  return Math.pow(x * x + y * y, 0.5);
+}
+```
+
+## 5. Poäng för att äta munkar
+
+20. Vi har redan en plats i `draw` där vi kan räkna poäng. GameLab har inget sätt att skicka meddelanden mellan sprajtar utan vi använder vanliga variabler. Öka variabeln `points` med 1 när narvalen äter.
+
+![Öka points när narvalen äter](image11.png)
+
+21. Poängräknaren behöver deklareras med `var` innan vi använder den. Nollställ den också.
+![Nollställ poängräknaren](image16.png)
+
+Vi skriver ut värdet varje gång i slutet av `draw` så här. *(25, 25)* är koordinaterna på skärmen där texten ska stå.
+![Skriv ut poäng](image28.png)
+
+Eftersom `drawSprites` ritar om hela spelytan, behöver vi skriva ut poängen efter sprajtarna så den hamnar överst även om det skulle vara sprajtar i övre vänstra hörnet. “+”-tecknet i `text`-blocket lägger ihop texten “Poäng: ” med variabeln som räknar poängen.
+22. Se 20
+
+23. Se 20
+
+24. Se 20
 
 
+25. Nu vill vi ha flera `cupcake`-sprajtar. Så här ser planen ut:
 
+  a. Vi gör en sprajt-grupp som vi kallar `cupcakes` och där lägger vi in flera cupcakes som vi skapar. Här är de två block vi behöver.
+![Sprajtgruppen cupcakes](image14.png)
 
+  b. GameLab kan känna av om narvalen krockar med någon sprajt i gruppen på samma sätt som när vi bara hade en cupcake.
 
+  c. GameLab har inget sätt att berätta exakt vilken cupcake som nuddade narvalen. Vi får gå igenom gruppen `cupcakes` och hitta vilken sprajt som valen åt och sen ta bort den ur gruppen. Vi gör en funktion som vi kallar `cupcakeNomnom`
 
+  d. Att ha en timer på 3 sekunder för varje uppäten cupcake blir krångligt. Vi nöjer oss så länge med att hålla reda på hur många cupcake som syns just nu och så skapar vi nya med en viss fördröjning, inuti `draw`.
 
+Nu sätter vi igång!
 
+Vi lägger till gruppen `cupcakes` och ser till att den får fem sprajtar. Vi upprepar samma kod fem gånger med ett `for`-block. Vi gör också så att gruppen `cupcakes` studsar mot kanterna. Då kommer varje cupcake i gruppen att hålla sig inne på spelplanen automatiskt.
+![Vi skapar fem cupcake](image24.png)
 
+Ändra så att narvalen känner av gruppen `cupcakes` och anropar funktionen `cupcakeNomnom`, som letar upp vilken cupcake som blev uppäten.
+![Narvalen känner av cupcakes](image27.png)
 
-
+Längst ner lägger vi till funktionen `cupcakeNomnom`:
 
 
 
